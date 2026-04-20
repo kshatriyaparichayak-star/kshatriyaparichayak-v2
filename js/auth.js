@@ -1,39 +1,40 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { firebaseConfig } from "./firebase-config.js";
-import { showPage } from "./ui.js";
-
-// Firebase शुरू करें
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
+import { signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { auth, provider } from "./firebase-config.js"; // सीधा कॉन्फ़िग से आ रहा है
+import { showPage, toggleLoader } from "./ui.js";
 
 // लॉगिन फंक्शन
 export const login = async () => {
     try {
         await signInWithPopup(auth, provider);
-        // लॉगिन सफल होने पर Dashboard पर ले जाएं
+        // लॉगिन सफल होने पर डैशबोर्ड दिखाएं
         showPage('page-dashboard');
     } catch (error) {
-        console.error("लॉगिन में दिक्कत आई:", error);
-        alert("लॉगिन नहीं हो पाया, कृपया दोबारा कोशिश करें।");
+        console.error("लॉगिन त्रुटि:", error);
+        alert("लॉगिन विफल रहा। कृपया इंटरनेट चेक करें।");
+        toggleLoader(false);
     }
 };
 
 // लॉगआउट फंक्शन
 export const logout = async () => {
-    await signOut(auth);
-    showPage('page-login');
+    try {
+        await signOut(auth);
+        showPage('page-login');
+    } catch (error) {
+        console.error("लॉगआउट त्रुटि:", error);
+    }
 };
 
-// यह चेक करता रहेगा कि यूज़र लॉगिन है या नहीं
+// यूज़र की स्थिति पर नज़र रखना
 export const checkAuthState = () => {
     onAuthStateChanged(auth, (user) => {
         if (user) {
-            console.log("यूज़र लॉगिन है:", user.displayName);
+            console.log("स्वागत है:", user.displayName);
             showPage('page-dashboard');
         } else {
             showPage('page-login');
         }
+        // चेक पूरा होने पर लोडर हटा दें
+        toggleLoader(false);
     });
 };

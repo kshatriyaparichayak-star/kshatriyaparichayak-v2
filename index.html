@@ -21,17 +21,62 @@
     </header>
 
     <main id="app-container">
+        
         <section id="page-login" class="app-page active">
             <div class="welcome-box">
-                <img src="logo.png" class="main-logo">
+                <img src="logo.png" class="main-logo" alt="Logo">
                 <h2>जय श्री राम</h2>
                 <p>समाज के डिजिटल मंच से जुड़ें</p>
-                <button id="login-btn" class="btn-google">Google लॉगिन</button>
+                <button id="login-btn" class="btn-google">
+                    <i class="fa-brands fa-google"></i> Google लॉगिन
+                </button>
             </div>
         </section>
 
-        <section id="page-dashboard" class="app-page"></section>
-        <section id="page-members" class="app-page"></section>
+        <section id="page-dashboard" class="app-page">
+            <div class="dashboard-banner">
+                <h3 id="user-welcome">स्वागत है!</h3>
+                <p>क्षत्रिय समाज की डिजिटल डायरेक्टरी</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="f-card" id="btn-goto-members">
+                    <i class="fa-solid fa-users-viewfinder"></i>
+                    <span>सदस्य सूची</span>
+                </div>
+                <div class="f-card" id="btn-goto-profile">
+                    <i class="fa-solid fa-user-pen"></i>
+                    <span>अपनी प्रोफाइल</span>
+                </div>
+                <div class="f-card" id="btn-goto-alerts">
+                    <i class="fa-solid fa-bell"></i>
+                    <span>समाज अलर्ट</span>
+                </div>
+                <div class="f-card" id="btn-goto-admin">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>एडमिन पैनल</span>
+                </div>
+            </div>
+
+            <div class="notice-section">
+                <h4><i class="fa-solid fa-thumbtack"></i> ताज़ा सूचनाएं</h4>
+                <div id="notice-container" class="empty-msg">कोई नई सूचना नहीं है।</div>
+            </div>
+        </section>
+
+        <section id="page-members" class="app-page">
+            <div class="page-header-nav">
+                <i class="fa-solid fa-arrow-left" id="back-to-dash"></i>
+                <span>समाज के सदस्य</span>
+            </div>
+            <div class="search-box">
+                <input type="text" id="member-search" placeholder="नाम या जिला खोजें...">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </div>
+            <div id="members-list-container">
+                </div>
+        </section>
+
     </main>
 
     <div id="loader" style="display:none;"><div class="spinner"></div></div>

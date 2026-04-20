@@ -1,38 +1,39 @@
+}
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { firebaseConfig } from "./firebase-config.js";
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 export async function loadMembers() {
     const container = document.getElementById('members-list-container');
-    container.innerHTML = '<div class="spinner-small"></div> खोजने की कोशिश जारी है...';
+    container.innerHTML = '<div style="padding:20px;">खोज जारी है...</div>';
 
     try {
         const querySnapshot = await getDocs(collection(db, "members"));
-        container.innerHTML = ""; // पुराना मैसेज हटाएं
+        container.innerHTML = ""; 
 
         if (querySnapshot.empty) {
-            container.innerHTML = "<p>कोई सदस्य नहीं मिला।</p>";
+            container.innerHTML = "कोई सदस्य नहीं मिला।";
             return;
         }
 
         querySnapshot.forEach((doc) => {
             const data = doc.data();
-            const memberCard = `
-                <div class="member-card-new">
-                    <div class="m-info">
-                        <strong>${data.name || 'अनाम सदस्य'}</strong>
-                        <span><i class="fa-solid fa-location-dot"></i> ${data.district || 'स्थान उपलब्ध नहीं'}</span>
+            const card = `
+                <div class="member-card-new" style="background:white; margin:10px; padding:15px; border-radius:10px; border-left:5px solid #8B0000; display:flex; justify-content:space-between;">
+                    <div>
+                        <strong style="display:block; color:#8B0000;">${data.name || 'क्षत्रिय सदस्य'}</strong>
+                        <small>${data.district || 'जिला उपलब्ध नहीं'}</small>
                     </div>
-                    <a href="tel:${data.phone}" class="call-btn"><i class="fa-solid fa-phone"></i></a>
+                    <a href="tel:${data.phone}" style="color:green; font-size:20px;"><i class="fa-solid fa-phone"></i></a>
                 </div>
             `;
-            container.insertAdjacentHTML('beforeend', memberCard);
+            container.insertAdjacentHTML('beforeend', card);
         });
-    } catch (error) {
-        console.error("Error loading members:", error);
-        container.innerHTML = "<p>डेटा लोड करने में समस्या आई।</p>";
+    } catch (e) {
+        container.innerHTML = "डेटा लाने में त्रुटि हुई।";
+        console.error(e);
     }
 }

@@ -1,9 +1,13 @@
 import { showPage } from './ui.js';
+import { login, checkAuthState } from './auth.js';
 
-// जब पूरी वेबसाइट लोड हो जाए तब यह चलेगा
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Kshatriya Parichayak V2: Started");
-    
-    // ऐप शुरू होते ही सबसे पहले लॉगिन पेज दिखाएं
-    showPage('page-login');
+    // 1. चेक करें कि यूज़र पहले से लॉगिन तो नहीं है
+    checkAuthState();
+
+    // 2. लॉगिन बटन पर क्लिक का काम सेट करें
+    const loginBtn = document.getElementById('login-btn');
+    if (loginBtn) {
+        loginBtn.addEventListener('click', login);
+    }
 });

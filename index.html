@@ -3,77 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>क्षत्रिय परिचायक V2</title>
+    <title>Rajput - क्षत्रिय परिचायक</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#8B0000">
+    
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+    <div id="loader"><div class="spinner"></div></div>
+
     <header class="main-header" id="app-header" style="display: none;">
         <div class="header-left">
-            <i class="fa-solid fa-bars-staggered"></i>
-            <span class="app-name">क्षत्रिय परिचायक</span>
+            <span class="app-name">Rajput</span>
         </div>
         <div class="header-right">
-            <i class="fa-solid fa-right-from-bracket" id="logout-btn" title="लॉगआउट"></i>
+            <button id="lang-toggle" class="btn-lang">English</button>
+            <i class="fa-solid fa-right-from-bracket" id="logout-btn"></i>
         </div>
     </header>
 
     <main id="app-container">
         <section id="page-login" class="app-page active">
             <div class="welcome-box">
-                <img src="logo.png" class="main-logo" alt="क्षत्रिय परिचायक" onerror="this.style.display='none'">
-                <h2>जय श्री राम</h2>
-                <p>समाज के डिजिटल मंच से जुड़ें</p>
+                <img src="logo.png" class="main-logo" alt="Logo" onerror="this.style.display='none'">
+                <h2 data-hi="जय श्री राम" data-en="Jai Shree Ram">जय श्री राम</h2>
+                <p data-hi="समाज के डिजिटल मंच से जुड़ें" data-en="Join the Community Platform">समाज के डिजिटल मंच से जुड़ें</p>
                 <button id="login-btn" class="btn-google">
-                    <i class="fa-brands fa-google"></i> Google लॉगिन
+                    <i class="fa-brands fa-google"></i> Google Login
                 </button>
+            </div>
+        </section>
+
+        <section id="page-profile-setup" class="app-page">
+            <div class="dashboard-banner">
+                <h3 data-hi="अपनी प्रोफाइल बनाएं" data-en="Create Profile">अपनी प्रोफाइल बनाएं</h3>
+            </div>
+            <div class="admin-box">
+                <div class="photo-upload-cont">
+                    <label for="p-photo">
+                        <div id="photo-preview"><i class="fa-solid fa-camera"></i></div>
+                    </label>
+                    <input type="file" id="p-photo" accept="image/*" style="display:none;">
+                </div>
+                <input type="text" id="p-name" placeholder="पूरा नाम / Full Name">
+                <input type="text" id="p-father" placeholder="पिता का नाम / Father's Name">
+                <input type="number" id="p-age" placeholder="उम्र / Age">
+                <input type="text" id="p-gotra" placeholder="गोत्र / Gotra">
+                <input type="text" id="p-blood" placeholder="ब्लड ग्रुप / Blood Group">
+                <input type="text" id="p-profession" placeholder="पेशा / Profession">
+                <input type="text" id="p-city" placeholder="वर्तमान शहर / Current City">
+                <textarea id="p-address" placeholder="स्थायी पता / Full Address"></textarea>
+                <button id="btn-save-profile" class="btn-primary">Save Profile</button>
             </div>
         </section>
 
         <section id="page-dashboard" class="app-page">
             <div class="dashboard-banner">
-                <h3>स्वागत है!</h3>
-                <p>क्षत्रिय समाज की डिजिटल डायरेक्टरी</p>
+                <h3 id="welcome-name">...</h3>
+                <p><span data-hi="रेफरल शक्ति:" data-en="Referral Power:">रेफरल शक्ति:</span> <span id="ref-power-text">0/11</span></p>
+                <button id="btn-share-ref" class="btn-share"><i class="fa-solid fa-paper-plane"></i> <span data-hi="आमंत्रण भेजें" data-en="Send Invite">आमंत्रण भेजें</span></button>
             </div>
-            
+
+            <div class="notice-board" id="main-notice-board">
+                <div id="notice-img-cont"></div>
+                <div id="notice-text-cont">...</div>
+            </div>
+
             <div class="features-grid">
                 <div class="f-card" id="btn-goto-members">
                     <i class="fa-solid fa-users"></i>
-                    <span>सदस्य सूची</span>
+                    <span data-hi="सदस्य सूची" data-en="Members">सदस्य सूची</span>
                 </div>
-                <div class="f-card" id="btn-goto-profile">
-                    <i class="fa-solid fa-user-pen"></i>
-                    <span>अपनी प्रोफाइल</span>
+                <div class="f-card" id="btn-goto-profile-view">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <span data-hi="मेरी प्रोफाइल" data-en="My Profile">मेरी प्रोफाइल</span>
                 </div>
-                <div class="f-card" id="btn-goto-alerts">
-                    <i class="fa-solid fa-bell"></i>
-                    <span>समाज अलर्ट</span>
-                </div>
-                <div class="f-card" id="btn-goto-admin">
-                    <i class="fa-solid fa-shield-halved"></i>
-                    <span>एडमिन पैनल</span>
+                <div class="f-card" id="btn-admin-panel" style="display:none;">
+                    <i class="fa-solid fa-user-gear"></i>
+                    <span>Admin Tools</span>
                 </div>
             </div>
 
-            <div class="notice-board">
-                <h4><i class="fa-solid fa-bullhorn"></i> ताज़ा सूचनाएं</h4>
-                <div id="notice-content">फिलहाल कोई नई सूचना नहीं है।</div>
-            </div>
+            <footer class="app-footer">
+                <span onclick="showStaticPage('about')">About</span> | 
+                <span onclick="showStaticPage('privacy')">Privacy</span> | 
+                <span onclick="showStaticPage('terms')">Terms</span> | 
+                <span onclick="showStaticPage('contact')">Contact</span>
+            </footer>
         </section>
 
         <section id="page-members" class="app-page">
             <div class="page-header-nav">
                 <i class="fa-solid fa-arrow-left" id="back-to-dash"></i>
-                <span>समाज के सदस्य</span>
+                <span data-hi="समाज के सदस्य" data-en="Community Members">समाज के सदस्य</span>
             </div>
-            <div id="members-list-container">
-                </div>
+            <div id="members-list-container"></div>
+        </section>
+
+        <section id="page-admin" class="app-page">
+            <div class="page-header-nav">
+                <i class="fa-solid fa-arrow-left" id="admin-to-dash"></i>
+                <span>Admin Control</span>
+            </div>
+            <div class="admin-box">
+                <h4>Publish Notice (Photo + Text)</h4>
+                <input type="file" id="notice-upload" accept="image/*">
+                <textarea id="notice-msg" placeholder="Write message..."></textarea>
+                <button id="btn-publish-notice" class="btn-primary">Post Notice</button>
+            </div>
+            <div id="admin-user-list"></div>
+        </section>
+
+        <section id="page-static" class="app-page">
+            <div class="page-header-nav">
+                <i class="fa-solid fa-arrow-left" onclick="showPage('page-dashboard')"></i>
+                <span id="static-title">Title</span>
+            </div>
+            <div id="static-content" class="static-body"></div>
         </section>
     </main>
 
-    <div id="loader" style="display:none;"><div class="spinner"></div></div>
+    <div id="member-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="close-modal">&times;</span>
+            <div id="modal-body"></div>
+        </div>
+    </div>
 
     <script type="module" src="js/main.js"></script>
 </body>

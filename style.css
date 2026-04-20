@@ -1,20 +1,147 @@
 :root {
     --royal-red: #8B0000;
+    --saffron: #ff8c00;
     --gold: #D4AF37;
+    --white: #ffffff;
     --bg: #fdfaf5;
+    --text-dark: #333;
 }
 
-body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); }
+* { box-sizing: border-box; }
 
-.app-page { display: none; min-height: 100vh; padding: 20px; }
+body { 
+    margin: 0; 
+    font-family: 'Poppins', sans-serif; 
+    background: var(--bg); 
+    color: var(--text-dark);
+}
+
+/* --- पेज मैनेजमेंट --- */
+.app-page { 
+    display: none; 
+    min-height: 100vh; 
+    padding: 20px; 
+    animation: fadeIn 0.4s ease;
+}
 .app-page.active { display: block; }
 
-.main-header { background: var(--royal-red); color: white; padding: 15px; display: flex; justify-content: space-between; border-bottom: 3px solid var(--gold); }
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
-.welcome-box { text-align: center; margin-top: 100px; }
-.main-logo { width: 120px; margin-bottom: 20px; }
+/* --- रॉयल हेडर --- */
+.main-header { 
+    background: var(--royal-red); 
+    color: white; 
+    padding: 15px 20px; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    border-bottom: 3px solid var(--gold);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
 
-.btn-google { background: #4285F4; color: white; border: none; padding: 12px 25px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+/* --- लॉगिन स्क्रीन --- */
+.welcome-box { text-align: center; margin-top: 80px; }
+.main-logo { width: 130px; margin-bottom: 20px; }
+.btn-google { 
+    background: #4285F4; color: white; border: none; 
+    padding: 12px 30px; border-radius: 50px; 
+    font-weight: 600; font-size: 16px; cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
 
-.spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--royal-red); border-radius: 50%; animation: spin 1s linear infinite; }
+/* --- डैशबोर्ड डिज़ाइन --- */
+.dashboard-banner {
+    background: linear-gradient(135deg, var(--royal-red), #b30000);
+    color: white;
+    padding: 30px 20px;
+    border-radius: 20px;
+    margin-bottom: 25px;
+    text-align: center;
+    box-shadow: 0 10px 20px rgba(139, 0, 0, 0.15);
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.f-card {
+    background: white;
+    padding: 25px 15px;
+    text-align: center;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border-bottom: 4px solid var(--gold);
+    cursor: pointer;
+    transition: 0.2s;
+}
+.f-card:active { transform: scale(0.95); }
+.f-card i { font-size: 32px; color: var(--royal-red); margin-bottom: 10px; }
+.f-card span { display: block; font-weight: 600; font-size: 14px; }
+
+/* --- सूचना बोर्ड --- */
+.notice-section {
+    background: #fff;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+.notice-section h4 { margin-top: 0; color: var(--royal-red); border-bottom: 1px solid #eee; padding-bottom: 10px; }
+.empty-msg { color: #999; font-style: italic; text-align: center; }
+
+/* --- पेजों का हेडर (Back Button के साथ) --- */
+.page-header-nav {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px 0;
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--royal-red);
+    margin-bottom: 20px;
+}
+#back-to-dash { cursor: pointer; font-size: 20px; }
+
+/* --- सर्च बॉक्स --- */
+.search-box {
+    position: relative;
+    margin-bottom: 20px;
+}
+.search-box input {
+    width: 100%;
+    padding: 12px 40px 12px 15px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    outline: none;
+    font-family: inherit;
+}
+.search-box i {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+}
+
+/* --- लोडिंग स्पिनर --- */
+#loader {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(255,255,255,0.9);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 2000;
+}
+.spinner {
+    width: 45px; height: 45px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid var(--royal-red);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }

@@ -1,132 +1,119 @@
 :root {
     --royal-red: #8B0000;
-    --saffron: #ff8c00;
     --gold: #D4AF37;
+    --saffron: #ff8c00;
     --white: #ffffff;
     --bg: #fdfaf5;
     --text-dark: #333;
-    --shadow: 0 4px 12px rgba(0,0,0,0.08);
+    --shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
-* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+/* --- Base Styles --- */
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
 
 body { 
-    margin: 0; 
-    font-family: 'Poppins', sans-serif; 
-    background: var(--bg); 
-    color: var(--text-dark);
-    overflow-x: hidden;
+    margin: 0; font-family: 'Poppins', sans-serif; 
+    background: var(--bg); color: var(--text-dark);
+    line-height: 1.6; overflow-x: hidden;
 }
 
 /* --- Animations --- */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-.app-page { 
-    display: none; 
-    min-height: 100vh; 
-    padding: 20px; 
-    animation: fadeIn 0.4s ease;
-}
+.app-page { display: none; padding: 20px; min-height: 100vh; animation: fadeIn 0.4s ease; }
 .app-page.active { display: block; }
 
-/* --- Global Header --- */
+/* --- Rajput Global Header --- */
 .main-header { 
-    background: var(--royal-red); 
-    color: white; 
-    padding: 15px 20px; 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center;
-    border-bottom: 3px solid var(--gold);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    background: var(--royal-red); color: white; padding: 12px 20px; 
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 3px solid var(--gold); position: sticky; top: 0; z-index: 1000;
 }
-.app-name { font-weight: 600; font-size: 1.1rem; margin-left: 10px; }
-
-/* --- Login Screen --- */
-.welcome-box { text-align: center; margin-top: 60px; padding: 20px; }
-.main-logo { width: 140px; margin-bottom: 15px; border-radius: 50%; }
-.btn-google { 
-    background: #ffffff; color: #444; border: 1px solid #ddd; 
-    padding: 12px 25px; border-radius: 50px; 
-    font-weight: 600; font-size: 16px; cursor: pointer;
-    display: inline-flex; align-items: center; gap: 10px;
-    box-shadow: var(--shadow);
-    transition: 0.3s;
+.btn-lang {
+    background: var(--gold); color: var(--royal-red); border: none;
+    padding: 5px 12px; border-radius: 20px; font-weight: 600; font-size: 12px;
+    cursor: pointer; transition: 0.3s;
 }
-.btn-google i { color: #4285F4; font-size: 1.2rem; }
 
-/* --- Dashboard --- */
+/* --- Dashboard Banner --- */
 .dashboard-banner {
     background: linear-gradient(135deg, var(--royal-red), #b30000);
-    color: white;
-    padding: 30px 20px;
-    border-radius: 20px;
-    margin-bottom: 25px;
-    text-align: center;
-    box-shadow: 0 8px 16px rgba(139, 0, 0, 0.2);
+    color: white; padding: 30px 20px; border-radius: 20px; text-align: center;
+    margin-bottom: 25px; box-shadow: 0 8px 16px rgba(139, 0, 0, 0.2);
 }
-.dashboard-banner h3 { margin: 0; font-size: 1.5rem; }
-
-.features-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-    margin-bottom: 25px;
+.btn-share {
+    background: var(--gold); color: var(--royal-red); border: none;
+    padding: 10px 20px; border-radius: 50px; font-weight: bold; margin-top: 15px;
+    cursor: pointer; box-shadow: var(--shadow);
 }
 
+/* --- Smart Notice Board (Admin Control) --- */
+.notice-board {
+    background: white; border-radius: 15px; overflow: hidden;
+    box-shadow: var(--shadow); margin-bottom: 25px; border-left: 5px solid var(--saffron);
+}
+#notice-img-cont img { width: 100%; height: auto; display: block; }
+#notice-text-cont { padding: 15px; font-size: 0.95rem; color: #444; }
+
+/* --- Feature Grid --- */
+.features-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
 .f-card {
-    background: white;
-    padding: 20px 10px;
-    text-align: center;
-    border-radius: 15px;
-    box-shadow: var(--shadow);
-    border-bottom: 4px solid var(--gold);
-    transition: 0.2s;
+    background: white; padding: 20px 10px; text-align: center; border-radius: 15px;
+    box-shadow: var(--shadow); border-bottom: 4px solid var(--gold); transition: 0.2s;
 }
 .f-card:active { transform: scale(0.95); background: #fffcf5; }
 .f-card i { font-size: 30px; color: var(--royal-red); margin-bottom: 8px; }
 .f-card span { display: block; font-weight: 600; font-size: 0.85rem; }
 
-/* --- Notice Board --- */
-.notice-board {
-    background: #fff;
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: var(--shadow);
-    border-left: 5px solid var(--saffron);
+/* --- Profile Setup & Admin Forms --- */
+.admin-box { background: white; padding: 20px; border-radius: 15px; box-shadow: var(--shadow); margin-bottom: 20px; }
+.admin-box input, .admin-box textarea {
+    width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ddd;
+    border-radius: 8px; font-family: inherit; font-size: 14px;
 }
-.notice-board h4 { margin: 0 0 10px 0; color: var(--royal-red); font-size: 1rem; }
-#notice-content { font-size: 0.9rem; color: #666; }
+.photo-upload-cont { text-align: center; margin-bottom: 20px; }
+#photo-preview {
+    width: 110px; height: 110px; border-radius: 50%; background: #f0f0f0;
+    margin: 0 auto; display: flex; align-items: center; justify-content: center;
+    border: 3px solid var(--gold); overflow: hidden; position: relative;
+}
+#photo-preview img { width: 100%; height: 100%; object-fit: cover; }
+.btn-primary {
+    background: var(--royal-red); color: white; width: 100%; border: none;
+    padding: 14px; border-radius: 10px; font-weight: 600; cursor: pointer;
+}
 
-/* --- Member List Page --- */
-.page-header-nav {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    padding: 10px 0;
-    font-weight: 600;
-    font-size: 1.1rem;
-    color: var(--royal-red);
+/* --- Member Cards (No Mobile Number) --- */
+.member-card {
+    background: white; padding: 12px; border-radius: 15px; margin-bottom: 15px;
+    display: flex; align-items: center; gap: 15px; box-shadow: var(--shadow);
+    border-left: 5px solid var(--royal-red); cursor: pointer;
 }
+.m-img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid #eee; }
+.m-info strong { display: block; color: var(--royal-red); font-size: 1.05rem; }
+.m-info span { font-size: 0.85rem; color: #666; display: block; }
+
+/* --- Modal (Pop-up Privacy Design) --- */
+.modal {
+    display: none; position: fixed; z-index: 2000; left: 0; top: 0;
+    width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px);
+}
+.modal-content {
+    background: white; margin: 15% auto; padding: 25px; border-radius: 20px;
+    width: 90%; max-width: 400px; position: relative; animation: slideUp 0.3s ease;
+}
+@keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.close-modal { position: absolute; right: 15px; top: 10px; font-size: 28px; cursor: pointer; color: #999; }
+#modal-body h3 { color: var(--royal-red); text-align: center; border-bottom: 2px solid var(--gold); padding-bottom: 10px; }
+.modal-detail { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f9f9f9; font-size: 0.9rem; }
+.modal-label { font-weight: 600; color: #555; }
+
+/* --- Static Pages & Footer --- */
+.static-body { background: white; padding: 20px; border-radius: 15px; font-size: 0.9rem; color: #444; }
+.app-footer { text-align: center; padding: 20px; font-size: 0.8rem; color: #888; border-top: 1px solid #eee; margin-top: 30px; }
+.app-footer span { cursor: pointer; margin: 0 8px; color: var(--royal-red); font-weight: 500; }
 
 /* --- Loader --- */
-#loader {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(255,255,255,0.9);
-    display: flex; justify-content: center; align-items: center;
-    z-index: 9999;
-}
-.spinner {
-    width: 40px; height: 40px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid var(--royal-red);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+#loader { position: fixed; inset: 0; background: var(--bg); display: flex; justify-content: center; align-items: center; z-index: 9999; }
+.spinner { width: 45px; height: 45px; border: 5px solid #eee; border-top-color: var(--royal-red); border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }

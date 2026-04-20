@@ -1,14 +1,41 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="hi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>क्षत्रिय परिचायक V2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-  
-</body>
 
+    <header class="main-header" id="app-header" style="display: none;">
+        <div class="header-left">
+            <i class="fa-solid fa-bars-staggered" id="menu-icon"></i>
+            <span class="app-name">क्षत्रिय परिचायक</span>
+        </div>
+        <div class="header-right">
+            <i class="fa-solid fa-right-from-bracket" id="logout-btn"></i>
+        </div>
+    </header>
+
+    <main id="app-container">
+        <section id="page-login" class="app-page active">
+            <div class="welcome-box">
+                <img src="logo.png" class="main-logo">
+                <h2>जय श्री राम</h2>
+                <p>समाज के डिजिटल मंच से जुड़ें</p>
+                <button id="login-btn" class="btn-google">Google लॉगिन</button>
+            </div>
+        </section>
+
+        <section id="page-dashboard" class="app-page"></section>
+        <section id="page-members" class="app-page"></section>
+    </main>
+
+    <div id="loader" style="display:none;"><div class="spinner"></div></div>
+
+    <script type="module" src="js/main.js"></script>
+</body>
 </html>

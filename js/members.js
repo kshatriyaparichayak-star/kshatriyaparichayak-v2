@@ -1,173 +1,99 @@
-import { showPage, toggleLoader } from './ui.js';
-import { login, logout, checkAuthState } from './auth.js';
-import { db, auth } from './firebase-config.js';
-import { doc, setDoc, collection, onSnapshot, query, getDocs, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+/**
+ * Rajput App - Members Logic (Directory & Privacy)
+ * File: js/members.js
+ */
 
-document.addEventListener('DOMContentLoaded', () => {
-    toggleLoader(true);
-    checkAuthState();
+import { db } from './firebase-config.js';
+import { collection, getDocs, doc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { toggleLoader } from './ui.js';
 
-    // --- 1. भाषा बदलने का लॉजिक ---
-    let currentLang = 'hi';
-    const langBtn = document.getElementById('lang-toggle');
-    langBtn?.addEventListener('click', () => {
-        currentLang = currentLang === 'hi' ? 'en' : 'hi';
-        langBtn.innerText = currentLang === 'hi' ? 'English' : 'Hindi';
-        document.querySelectorAll('[data-hi]').forEach(el => {
-            el.innerText = el.getAttribute(`data-${currentLang}`);
-        });
-    });
+/**
+ * 1. स्वीकृत सदस्य सूची लोड करना (Privacy Protected)
+ */
+export async function loadApprovedMembers(searchQuery = "") {
+    const container = document.getElementById('members-list-container');
+    if (!container) return;
 
-    // --- 2. फोटो कंप्रेसर (300px + Auto-Resize) ---
-    let compressedPhoto = "";
-    document.getElementById('p-photo')?.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            const img = new Image();
-            img.src = event.target.result;
-            img.onload = () => {
-                const canvas = document.createElement('canvas');
-                const scale = 300 / img.width;
-                canvas.width = 300;
-                canvas.height = img.height * scale;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                compressedPhoto = canvas.toDataURL('image/jpeg', 0.7);
-                document.getElementById('photo-preview').innerHTML = `<img src="${compressedPhoto}" style="width:100%; height:100%; object-fit:cover;">`;
-            };
-        };
-        reader.readAsDataURL(file);
-    });
+    container.innerHTML = "<div style='text-align:center; padding:20px;'>क्षत्रिय योद्धाओं की खोज जारी है...</div>";
 
-    // --- 3. प्रोफाइल सुरक्षित करें ---
-    document.getElementById('btn-save-profile')?.addEventListener('click', async () => {
-        const data = {
-            name: document.getElementById('p-name').value,
-            father: document.getElementById('p-father').value,
-            age: document.getElementById('p-age').value,
-            gotra: document.getElementById('p-gotra').value,
-            blood: document.getElementById('p-blood').value,
-            profession: document.getElementById('p-profession').value,
-            city: document.getElementById('p-city').value,
-            address: document.getElementById('p-address').value,
-            photo: compressedPhoto,
-            referralCount: 0,
-            role: 'member',
-            createdAt: new Date()
-        };
+    try {
+        // नियम: केवल एडमिन द्वारा अप्रूव्ड सदस्य ही दिखेंगे
+        const membersQuery = query(
+            collection(db, "users"),
+            where("isApproved", "==", true),
+            orderBy("name", "asc")
+        );
 
-        if (!data.name || !compressedPhoto) return alert("कृपया फोटो और नाम भरें!");
-
-        toggleLoader(true);
-        try {
-            await setDoc(doc(db, "users", auth.currentUser.uid), data);
-            // रेफरल देने वाले का काउंट बढ़ाएं (यदि लिंक से आया है)
-            const urlParams = new URLSearchParams(window.location.search);
-            const refUID = urlParams.get('ref');
-            if(refUID) {
-                await updateDoc(doc(db, "users", refUID), { referralCount: increment(1) });
-            }
-            location.reload();
-        } catch (e) { alert("Error: " + e.message); toggleLoader(false); }
-    });
-
-    // --- 4. रियल-टाइम नोटिस बोर्ड (Admin Control) ---
-    onSnapshot(doc(db, "settings", "notice"), (doc) => {
-        if (doc.exists()) {
-            const data = doc.data();
-            const imgCont = document.getElementById('notice-img-cont');
-            const textCont = document.getElementById('notice-text-cont');
-            if(imgCont) imgCont.innerHTML = data.img ? `<img src="${data.img}" style="width:100%;">` : '';
-            if(textCont) textCont.innerText = data.msg || '';
-        }
-    });
-
-    // --- 5. सदस्य सूची (Privacy: No Number) ---
-    const loadMembersList = async () => {
-        const container = document.getElementById('members-list-container');
-        container.innerHTML = "<div style='text-align:center; padding:20px;'>खोज जारी है...</div>";
-        const snap = await getDocs(collection(db, "users"));
+        const snap = await getDocs(membersQuery);
         container.innerHTML = "";
-        snap.forEach(doc => {
-            const u = doc.data();
-            if(!u.name) return;
+        let count = 0;
+
+        snap.forEach(docSnap => {
+            const u = docSnap.data();
+            
+            // सर्च फिल्टर (नाम, शहर या गोत्र)
+            if (searchQuery && 
+                !u.name.toLowerCase().includes(searchQuery.toLowerCase()) && 
+                !u.city.toLowerCase().includes(searchQuery.toLowerCase()) &&
+                !u.gotra.toLowerCase().includes(searchQuery.toLowerCase())) {
+                return;
+            }
+
             const card = `
-                <div class="member-card" onclick="showMemberDetail('${doc.id}')">
-                    <img src="${u.photo || 'logo.png'}" class="m-img">
+                <div class="member-card" onclick="window.showMemberDetail('${docSnap.id}')">
+                    <img src="${u.photoURL || u.photo || 'assets/logo.png'}" class="m-img" onerror="this.src='assets/logo.png'">
                     <div class="m-info">
                         <strong>${u.name}</strong>
-                        <span>${u.profession} | ${u.city}</span>
+                        <span>${u.profession || 'सदस्य'} | ${u.city || '-'}</span>
+                        <small style="color:var(--gold); font-size:10px;">गोत्र: ${u.gotra || '-'}</small>
                     </div>
-                    <i class="fa-solid fa-chevron-right" style="color:#ccc;"></i>
+                    <i class="fa-solid fa-chevron-right" style="color:#ccc; font-size:12px;"></i>
                 </div>`;
             container.insertAdjacentHTML('beforeend', card);
+            count++;
         });
-    };
 
-    // --- 6. प्राइवेसी पॉप-अप (Modal: No Number) ---
-    window.showMemberDetail = async (uid) => {
-        toggleLoader(true);
+        if (count === 0) {
+            container.innerHTML = "<p style='text-align:center; padding:20px;'>कोई सदस्य नहीं मिला।</p>";
+        }
+
+    } catch (e) {
+        console.error("Load Members Error:", e);
+        container.innerHTML = "<p style='text-align:center; color:red; padding:20px;'>सूची लोड करने में त्रुटि आई।</p>";
+    }
+}
+
+/**
+ * 2. सदस्य विवरण पॉप-अप (No Mobile Number Policy)
+ */
+window.showMemberDetail = async (uid) => {
+    toggleLoader(true);
+    try {
         const snap = await getDocs(collection(db, "users"));
         const user = snap.docs.find(d => d.id === uid)?.data();
+
         if (user) {
             document.getElementById('modal-body').innerHTML = `
-                <h3>${user.name}</h3>
-                <div class="modal-detail"><span class="modal-label">पिता:</span> <span>${user.father || '-'}</span></div>
-                <div class="modal-detail"><span class="modal-label">पेशा:</span> <span>${user.profession || '-'}</span></div>
-                <div class="modal-detail"><span class="modal-label">गोत्र:</span> <span>${user.gotra || '-'}</span></div>
-                <div class="modal-detail"><span class="modal-label">ब्लड ग्रुप:</span> <span>${user.blood || '-'}</span></div>
-                <div class="modal-detail"><span class="modal-label">उम्र:</span> <span>${user.age || '-'}</span></div>
-                <div class="modal-detail"><span class="modal-label">शहर:</span> <span>${user.city || '-'}</span></div>
-                <div class="modal-detail"><span class="modal-label">स्थायी पता:</span> <span>${user.address || '-'}</span></div>
-                <p style="color:red; font-size:11px; margin-top:15px; text-align:center;">सुरक्षा कारणों से मोबाइल नंबर गोपनीय है।</p>
+                <div style="text-align:center; margin-bottom:15px;">
+                    <img src="${user.photoURL || user.photo}" style="width:100px; height:100px; border-radius:50%; border:3px solid var(--gold); object-fit:cover;">
+                </div>
+                <h3 style="text-align:center; color:var(--royal-red); margin-bottom:15px;">${user.name}</h3>
+                <div class="modal-detail"><strong>पिता:</strong> <span>${user.father || '-'}</span></div>
+                <div class="modal-detail"><strong>पेशा:</strong> <span>${user.profession || '-'}</span></div>
+                <div class="modal-detail"><strong>गोत्र:</strong> <span>${user.gotra || '-'}</span></div>
+                <div class="modal-detail"><strong>ब्लड ग्रुप:</strong> <span>${user.blood || '-'}</span></div>
+                <div class="modal-detail"><strong>शहर:</strong> <span>${user.city || '-'}</span></div>
+                <div class="modal-detail"><strong>पता:</strong> <span>${user.address || '-'}</span></div>
+                <hr style="border:0; border-top:1px solid #eee; margin:15px 0;">
+                <p style="color:#c0392b; font-size:11px; text-align:center; font-weight:600;">
+                    <i class="fa-solid fa-shield-halved"></i> सुरक्षा कारणों से मोबाइल नंबर गोपनीय है।
+                </p>
             `;
             document.getElementById('member-modal').style.display = 'block';
         }
+    } catch (e) {
+        console.error("Detail Error:", e);
+    } finally {
         toggleLoader(false);
-    };
-
-    // --- 7. एडमिन नोटिस पब्लिशर ---
-    document.getElementById('btn-publish-notice')?.addEventListener('click', async () => {
-        const msg = document.getElementById('notice-msg').value;
-        const fileInput = document.getElementById('notice-upload');
-        let imgBase64 = "";
-
-        toggleLoader(true);
-        if (fileInput.files[0]) {
-            const reader = new FileReader();
-            reader.readAsDataURL(fileInput.files[0]);
-            reader.onload = async (e) => {
-                imgBase64 = e.target.result;
-                await setDoc(doc(db, "settings", "notice"), { msg, img: imgBase64, date: new Date() });
-                alert("नोटिस पब्लिश हुआ!");
-                toggleLoader(false);
-            };
-        } else {
-            await setDoc(doc(db, "settings", "notice"), { msg, img: "", date: new Date() });
-            alert("नोटिस पब्लिश हुआ!");
-            toggleLoader(false);
-        }
-    });
-
-    // --- इवेंट लिस्टनर्स ---
-    document.getElementById('login-btn')?.addEventListener('click', login);
-    document.getElementById('logout-btn')?.addEventListener('click', logout);
-    document.getElementById('close-modal')?.addEventListener('click', () => document.getElementById('member-modal').style.display = 'none');
-    document.getElementById('btn-goto-members')?.addEventListener('click', () => { showPage('page-members'); loadMembersList(); });
-    document.getElementById('back-to-dash')?.addEventListener('click', () => showPage('page-dashboard'));
-    document.getElementById('btn-admin-panel')?.addEventListener('click', () => showPage('page-admin'));
-    document.getElementById('admin-to-dash')?.addEventListener('click', () => showPage('page-dashboard'));
-    
-    // रेफरल शेयर लिंक
-    document.getElementById('btn-share-ref')?.addEventListener('click', () => {
-        const refLink = `${window.location.origin}${window.location.pathname}?ref=${auth.currentUser.uid}`;
-        const text = `जय श्री राम! क्षत्रिय परिचायक ऐप से जुड़ने के लिए मेरे लिंक का उपयोग करें: ${refLink}`;
-        if (navigator.share) {
-            navigator.share({ title: 'Rajput App', text: text, url: refLink });
-        } else {
-            prompt("लिंक कॉपी करें:", refLink);
-        }
-    });
-});
+    }
+};

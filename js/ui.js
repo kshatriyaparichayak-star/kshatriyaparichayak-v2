@@ -1,61 +1,104 @@
 /**
- * क्षत्रिय परिचायक - UI Routing & Loader
- * Professional Version
+ * Rajput App - UI Routing & Interaction
+ * File: js/ui.js
  */
 
-// पेजों को बदलने वाला फंक्शन
+// 1. पेजों को बदलने वाला फंक्शन (Routing)
 export function showPage(pageId) {
-    // 1. सभी पेजों को छिपाएं
     const pages = document.querySelectorAll('.app-page');
     pages.forEach(p => {
         p.classList.remove('active');
-        p.style.display = 'none'; // पक्का करने के लिए कि कोई और पेज न दिखे
+        p.style.display = 'none';
     });
 
-    // 2. टारगेट पेज को दिखाएँ
     const target = document.getElementById(pageId);
     if (target) {
         target.style.display = 'block';
-        // हल्का सा डिले ताकि एनीमेशन सही दिखे
         setTimeout(() => {
             target.classList.add('active');
         }, 10);
-    } else {
-        console.error("Page ID not found:", pageId);
-        // अगर पेज न मिले तो डैशबोर्ड पर भेजें (Safety Fallback)
-        const dash = document.getElementById('page-dashboard');
-        if(dash) dash.style.display = 'block';
     }
 
-    // 3. हेडर (Header) मैनेजमेंट
+    // हेडर मैनेजमेंट
     const header = document.getElementById('app-header');
     if (header) {
-        // लॉगिन और प्रोफाइल सेटअप पेज पर हेडर छिपाएं
         const hideHeaderOn = ['page-login', 'page-profile-setup'];
         header.style.display = hideHeaderOn.includes(pageId) ? 'none' : 'flex';
     }
     
-    // पेज खुलते ही लोडर बंद करें
-    toggleLoader(false);
+    // साइडबार को अपने आप बंद करें (अगर खुला हो)
+    closeSidebar();
     
-    // पेज के टॉप पर स्क्रॉल करें
+    toggleLoader(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// लोडिंग स्पिनर को कंट्रोल करने वाला फंक्शन
+// 2. लोडिंग स्पिनर कंट्रोल
 export function toggleLoader(show) {
     const loader = document.getElementById('loader');
     if (loader) {
         loader.style.display = show ? 'flex' : 'none';
-        
-        // सुरक्षा के लिए: अगर लोडर 10 सेकंड से ज्यादा चले तो उसे बंद कर दें
-        if (show) {
-            setTimeout(() => {
-                if (loader.style.display === 'flex') {
-                    loader.style.display = 'none';
-                    console.log("Loader timeout: Auto-closed.");
-                }
-            }, 10000);
-        }
     }
 }
+
+// 3. साइडबार (Sidebar) फंक्शन्स
+export function setupSidebar() {
+    const openBtn = document.getElementById('open-sidebar');
+    const closeBtn = document.getElementById('close-sidebar');
+    const sidebar = document.getElementById('sidebar');
+
+    if (openBtn && sidebar) {
+        openBtn.onclick = () => sidebar.classList.add('active');
+    }
+    if (closeBtn && sidebar) {
+        closeBtn.onclick = () => sidebar.classList.remove('active');
+    }
+}
+
+function closeSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar) sidebar.classList.remove('active');
+}
+
+// 4. सहयोग QR मोडल (Sahyog Modal)
+export function openQRModal() {
+    const modal = document.getElementById('qr-modal');
+    if (modal) modal.style.display = 'block';
+}
+
+export function closeQRModal() {
+    const modal = document.getElementById('qr-modal');
+    if (modal) modal.style.display = 'none';
+}
+
+// 5. स्टेटिक पेज लोडर (About, Privacy, etc.)
+export function showStaticPage(type) {
+    const titleMap = {
+        'about': 'About Us',
+        'terms': 'Terms & Conditions',
+        'privacy': 'Privacy Policy',
+        'contact': 'Contact Us',
+        'faq': 'FAQ'
+    };
+    
+    const content = document.getElementById('static-content');
+    const title = document.getElementById('static-title');
+    
+    if (title) title.innerText = titleMap[type] || 'Information';
+    
+    // यहाँ आप बाद में कंटेंट अपडेट कर सकते हैं
+    if (content) content.innerHTML = `<p>${titleMap[type]} का विवरण जल्द ही यहाँ उपलब्ध होगा।</p>`;
+    
+    showPage('page-static');
+}
+
+// इवेंट लिसनर्स सेट करें (जब DOM लोड हो जाए)
+window.addEventListener('DOMContentLoaded', () => {
+    setupSidebar();
+    
+    // मोडल के बाहर क्लिक करने पर मोडल बंद करें
+    window.onclick = (event) => {
+        const qrModal = document.getElementById('qr-modal');
+        if (event.target == qrModal) closeQRModal();
+    };
+});

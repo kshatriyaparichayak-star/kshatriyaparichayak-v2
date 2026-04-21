@@ -1,53 +1,66 @@
+/**
+ * Rajput App - Admin Master Control
+ * File: js/admin.js
+ */
+
 import { db, auth } from './firebase-config.js';
-import { collection, getDocs, doc, deleteDoc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { 
+    collection, getDocs, doc, deleteDoc, updateDoc, setDoc, query, where 
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { toggleLoader } from './ui.js';
 
 /**
- * 1. सभी सदस्यों की लिस्ट लोड करना (Edit/Delete के लिए)
+ * 1. एडमिन डैशबोर्ड लोड करना (Waitlist और Member List)
  */
-export async function loadAdminUserList() {
-    const container = document.getElementById('admin-user-list');
-    if (!container) return;
+export async function loadAdminData() {
+    const waitlistContainer = document.getElementById('admin-user-list');
+    if (!waitlistContainer) return;
 
-    container.innerHTML = "<p style='text-align:center; padding:20px;'>सदस्यों की सूची लोड हो रही है...</p>";
-
+    toggleLoader(true);
     try {
         const snap = await getDocs(collection(db, "users"));
-        container.innerHTML = "<h4>सभी पंजीकृत सदस्य</h4>";
+        waitlistContainer.innerHTML = "<h4>सदस्य प्रबंधन (Waitlist & Members)</h4>";
 
         snap.forEach(userDoc => {
             const u = userDoc.data();
+            const isPending = u.isApproved === false;
+
             const userRow = `
-                <div class="admin-user-row" style="background:#fff; padding:10px; margin-bottom:10px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 5px rgba(0,0,0,0.05);">
-                    <div style="font-size:14px;">
-                        <strong>${u.name || 'No Name'}</strong><br>
-                        <small>${u.city || 'No City'} | शक्ति: ${u.referralCount || 0}/11</small>
+                <div class="admin-user-row" style="background:${isPending ? '#fff5f5' : '#fff'}; padding:10px; margin-bottom:10px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 5px rgba(0,0,0,0.05); border-left: 5px solid ${isPending ? '#e67e22' : '#27ae60'};">
+                    <div style="font-size:13px;">
+                        <strong>${u.name || 'Anonymous'}</strong> ${isPending ? '<b style="color:#e67e22;">(Waitlist)</b>' : ''}<br>
+                        <small>${u.city || 'No City'} | Gotra: ${u.gotra || '-'}</small>
                     </div>
                     <div class="admin-actions">
-                        <button onclick="deleteMember('${userDoc.id}')" style="background:none; border:none; color:red; cursor:pointer; margin-left:10px;"><i class="fa-solid fa-trash"></i></button>
+                        ${isPending ? `<button onclick="approveMember('${userDoc.id}')" style="color:green; border:none; background:none; font-size:18px; cursor:pointer;"><i class="fa-solid fa-circle-check"></i></button>` : ''}
+                        <button onclick="deleteMember('${userDoc.id}')" style="color:red; border:none; background:none; font-size:18px; cursor:pointer; margin-left:10px;"><i class="fa-solid fa-trash-can"></i></button>
                     </div>
                 </div>
             `;
-            container.insertAdjacentHTML('beforeend', userRow);
+            waitlistContainer.insertAdjacentHTML('beforeend', userRow);
         });
     } catch (e) {
-        container.innerHTML = "सूची लोड करने में विफल।";
-        console.error(e);
+        console.error("Admin Load Error:", e);
+    } finally {
+        toggleLoader(false);
     }
 }
 
 /**
- * 2. सदस्य को डिलीट करना
+ * 2. सदस्य को अप्रूव करना (Waitlist से हटाना)
  */
-window.deleteMember = async (uid) => {
-    if (confirm("क्या आप वाकई इस सदस्य को हटाना चाहते हैं? यह डेटा वापस नहीं आएगा।")) {
+window.approveMember = async (uid) => {
+    if (confirm("क्या आप इस सदस्य को समाज की मुख्य सूची में शामिल करना चाहते हैं?")) {
         toggleLoader(true);
         try {
-            await deleteDoc(doc(db, "users", uid));
-            alert("सदस्य को हटा दिया गया है।");
-            loadAdminUserList(); // लिस्ट रिफ्रेश करें
+            await updateDoc(doc(db, "users", uid), {
+                isApproved: true,
+                approvedBy: auth.currentUser.email
+            });
+            alert("सदस्य को अप्रूव कर दिया गया है!");
+            loadAdminData();
         } catch (e) {
-            alert("त्रुटि: " + e.message);
+            alert("Approval Error: " + e.message);
         } finally {
             toggleLoader(false);
         }
@@ -55,65 +68,82 @@ window.deleteMember = async (uid) => {
 };
 
 /**
- * 3. फोटो + मैसेज वाला नोटिस पब्लिश करना
+ * 3. सदस्य को डिलीट करना (Master Power)
+ */
+window.deleteMember = async (uid) => {
+    if (confirm("सावधान! क्या आप इस प्रोफाइल को हमेशा के लिए डिलीट करना चाहते हैं?")) {
+        toggleLoader(true);
+        try {
+            await deleteDoc(doc(db, "users", uid));
+            alert("प्रोफाइल डिलीट कर दी गई है।");
+            loadAdminData();
+        } catch (e) {
+            alert("Delete Error: " + e.message);
+        } finally {
+            toggleLoader(false);
+        }
+    }
+};
+
+/**
+ * 4. एडमिन नोटिस पब्लिशर (21-Day Logic Integrated)
  */
 export async function publishNotice() {
-    const msg = document.getElementById('notice-msg').value;
+    const msg = document.getElementById('notice-msg').value.trim();
     const fileInput = document.getElementById('notice-upload');
-    let imgBase64 = "";
-
+    
     if (!msg && !fileInput.files[0]) {
-        alert("कृपया फोटो चुनें या संदेश लिखें!");
-        return;
+        return alert("सूचना के लिए फोटो या संदेश आवश्यक है!");
     }
 
     toggleLoader(true);
 
     try {
+        let imgData = "";
         if (fileInput.files[0]) {
-            // फोटो कंप्रेस करके Base64 बनाना
-            const file = fileInput.files[0];
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = async (e) => {
-                const img = new Image();
-                img.src = e.target.result;
-                img.onload = async () => {
-                    const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 500; // एडमिन नोटिस फोटो थोड़ी बड़ी (500px)
-                    const scale = MAX_WIDTH / img.width;
-                    canvas.width = MAX_WIDTH;
-                    canvas.height = img.height * scale;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    imgBase64 = canvas.toDataURL('image/jpeg', 0.7);
-
-                    await saveNoticeToDB(msg, imgBase64);
-                };
-            };
-        } else {
-            await saveNoticeToDB(msg, "");
+            imgData = await compressAdminImage(fileInput.files[0]);
         }
-    } catch (e) {
-        alert("Notice Error: " + e.message);
-        toggleLoader(false);
-    }
-}
 
-async function saveNoticeToDB(msg, img) {
-    try {
         await setDoc(doc(db, "settings", "notice"), {
             msg: msg,
-            img: img,
-            updatedBy: auth.currentUser.email,
-            date: new Date()
+            img: imgData,
+            date: new Date(), // Cleanup logic इसी तारीख को चेक करेगा
+            updatedBy: auth.currentUser.email
         });
-        alert("सूचना सफलतापूर्वक पब्लिश हो गई!");
+
+        alert("सूचना पब्लिश हुई! यह 21 दिनों तक बोर्ड पर रहेगी।");
         document.getElementById('notice-msg').value = "";
         document.getElementById('notice-upload').value = "";
     } catch (e) {
-        alert("डेटाबेस त्रुटि: " + e.message);
+        alert("Notice Error: " + e.message);
     } finally {
         toggleLoader(false);
     }
 }
+
+/**
+ * एडमिन फोटो कंप्रेसर
+ */
+function compressAdminImage(file) {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (e) => {
+            const img = new Image();
+            img.src = e.target.result;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 600; 
+                const scale = MAX_WIDTH / img.width;
+                canvas.width = MAX_WIDTH;
+                canvas.height = img.height * scale;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                resolve(canvas.toDataURL('image/jpeg', 0.7));
+            };
+        };
+    });
+}
+
+// Event Binding for Admin UI
+document.getElementById('btn-publish-notice')?.addEventListener('click', publishNotice);

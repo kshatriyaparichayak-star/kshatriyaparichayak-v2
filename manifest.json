@@ -1,1 +1,34 @@
-{}
+{
+  "short_name": "Rajput",
+  "name": "Rajput - क्षत्रिय परिचायक",
+  "description": "क्षत्रिय समाज का डिजिटल मंच - एकता और परिचय के लिए।",
+  "icons": [
+    {
+      "src": "assets/logo.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/logo.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/index.html",
+  "background_color": "#fdfaf5",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#8B0000",
+  "orientation": "portrait-primary",
+  "categories": ["social", "community"],
+  "shortcuts": [
+    {
+      "name": "सदस्य सूची",
+      "short_name": "Members",
+      "url": "/index.html#page-members",
+      "icons": [{ "src": "assets/logo.png", "sizes": "192x192" }]
+    }
+  ]
+}

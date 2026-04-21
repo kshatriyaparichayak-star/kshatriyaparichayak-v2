@@ -19,6 +19,7 @@ body {
 
 /* --- Animations --- */
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideIn { from { left: -280px; } to { left: 0; } }
 
 .app-page { display: none; padding: 20px; min-height: 100vh; animation: fadeIn 0.4s ease; }
 .app-page.active { display: block; }
@@ -29,10 +30,51 @@ body {
     display: flex; justify-content: space-between; align-items: center;
     border-bottom: 3px solid var(--gold); position: sticky; top: 0; z-index: 1000;
 }
-.btn-lang {
-    background: var(--gold); color: var(--royal-red); border: none;
-    padding: 5px 12px; border-radius: 20px; font-weight: 600; font-size: 12px;
-    cursor: pointer; transition: 0.3s;
+.header-left { display: flex; align-items: center; gap: 15px; }
+.menu-trigger { font-size: 20px; cursor: pointer; }
+.app-name { font-weight: 600; font-size: 1.2rem; letter-spacing: 1px; }
+
+/* --- Sidebar Menu --- */
+.sidebar {
+    position: fixed; top: 0; left: -280px; width: 280px; height: 100%;
+    background: var(--white); z-index: 2001; transition: 0.3s;
+    box-shadow: 5px 0 15px rgba(0,0,0,0.2);
+}
+.sidebar.active { left: 0; }
+.sidebar-header {
+    background: var(--royal-red); color: white; padding: 20px;
+    display: flex; justify-content: space-between; align-items: center;
+}
+.sidebar-links { padding: 20px; }
+.sidebar-links a {
+    display: block; padding: 12px 15px; color: var(--text-dark);
+    text-decoration: none; border-bottom: 1px solid #eee; transition: 0.2s;
+}
+.sidebar-links a:active { background: #fdf0f0; color: var(--royal-red); }
+.sidebar-links i { margin-right: 10px; color: var(--royal-red); }
+
+/* --- Sahyog & Alert Section --- */
+.sahyog-card {
+    background: #fffcf0; border: 2px dashed var(--gold);
+    padding: 20px; border-radius: 15px; text-align: center; margin-bottom: 25px;
+}
+.btn-sahyog {
+    background: #27ae60; color: white; border: none; padding: 10px 20px;
+    border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px;
+}
+
+.emergency-alert-box {
+    background: #fff5f5; border: 1px solid #ffcccc; padding: 15px;
+    border-radius: 15px; margin-bottom: 25px;
+}
+.emergency-alert-box h4 { color: #c0392b; margin: 0 0 10px 0; font-size: 0.9rem; }
+.emergency-alert-box textarea {
+    width: 100%; height: 80px; border: 1px solid #ddd; border-radius: 8px;
+    padding: 10px; font-family: inherit; font-size: 14px;
+}
+.btn-alert {
+    background: #c0392b; color: white; border: none; width: 100%;
+    padding: 10px; border-radius: 8px; font-weight: 600; margin-top: 10px;
 }
 
 /* --- Dashboard Banner --- */
@@ -41,19 +83,6 @@ body {
     color: white; padding: 30px 20px; border-radius: 20px; text-align: center;
     margin-bottom: 25px; box-shadow: 0 8px 16px rgba(139, 0, 0, 0.2);
 }
-.btn-share {
-    background: var(--gold); color: var(--royal-red); border: none;
-    padding: 10px 20px; border-radius: 50px; font-weight: bold; margin-top: 15px;
-    cursor: pointer; box-shadow: var(--shadow);
-}
-
-/* --- Smart Notice Board (Admin Control) --- */
-.notice-board {
-    background: white; border-radius: 15px; overflow: hidden;
-    box-shadow: var(--shadow); margin-bottom: 25px; border-left: 5px solid var(--saffron);
-}
-#notice-img-cont img { width: 100%; height: auto; display: block; }
-#notice-text-cont { padding: 15px; font-size: 0.95rem; color: #444; }
 
 /* --- Feature Grid --- */
 .features-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
@@ -61,59 +90,40 @@ body {
     background: white; padding: 20px 10px; text-align: center; border-radius: 15px;
     box-shadow: var(--shadow); border-bottom: 4px solid var(--gold); transition: 0.2s;
 }
-.f-card:active { transform: scale(0.95); background: #fffcf5; }
-.f-card i { font-size: 30px; color: var(--royal-red); margin-bottom: 8px; }
-.f-card span { display: block; font-weight: 600; font-size: 0.85rem; }
+.f-card i { font-size: 28px; color: var(--royal-red); margin-bottom: 8px; }
+.f-card span { display: block; font-weight: 600; font-size: 0.8rem; }
 
-/* --- Profile Setup & Admin Forms --- */
-.admin-box { background: white; padding: 20px; border-radius: 15px; box-shadow: var(--shadow); margin-bottom: 20px; }
-.admin-box input, .admin-box textarea {
-    width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ddd;
-    border-radius: 8px; font-family: inherit; font-size: 14px;
-}
-.photo-upload-cont { text-align: center; margin-bottom: 20px; }
+/* --- Forms & Profile Setup --- */
+.form-container { background: white; padding: 20px; border-radius: 15px; box-shadow: var(--shadow); }
+.warning-text { color: #c0392b; font-size: 0.75rem; font-weight: 600; text-align: center; }
+.photo-upload-cont { text-align: center; margin: 15px 0; }
 #photo-preview {
-    width: 110px; height: 110px; border-radius: 50%; background: #f0f0f0;
+    width: 100px; height: 100px; border-radius: 50%; background: #f9f9f9;
     margin: 0 auto; display: flex; align-items: center; justify-content: center;
-    border: 3px solid var(--gold); overflow: hidden; position: relative;
+    border: 3px solid var(--gold); overflow: hidden; font-size: 0.7rem; color: #888;
 }
 #photo-preview img { width: 100%; height: 100%; object-fit: cover; }
+input, textarea {
+    width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ddd;
+    border-radius: 8px; font-family: inherit;
+}
 .btn-primary {
     background: var(--royal-red); color: white; width: 100%; border: none;
     padding: 14px; border-radius: 10px; font-weight: 600; cursor: pointer;
 }
 
-/* --- Member Cards (No Mobile Number) --- */
-.member-card {
-    background: white; padding: 12px; border-radius: 15px; margin-bottom: 15px;
-    display: flex; align-items: center; gap: 15px; box-shadow: var(--shadow);
-    border-left: 5px solid var(--royal-red); cursor: pointer;
-}
-.m-img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid #eee; }
-.m-info strong { display: block; color: var(--royal-red); font-size: 1.05rem; }
-.m-info span { font-size: 0.85rem; color: #666; display: block; }
+/* --- QR Modal --- */
+.qr-img { width: 200px; height: 200px; margin: 15px auto; display: block; border: 5px solid var(--gold); border-radius: 10px; }
 
-/* --- Modal (Pop-up Privacy Design) --- */
-.modal {
-    display: none; position: fixed; z-index: 2000; left: 0; top: 0;
-    width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px);
-}
-.modal-content {
-    background: white; margin: 15% auto; padding: 25px; border-radius: 20px;
-    width: 90%; max-width: 400px; position: relative; animation: slideUp 0.3s ease;
-}
-@keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-.close-modal { position: absolute; right: 15px; top: 10px; font-size: 28px; cursor: pointer; color: #999; }
-#modal-body h3 { color: var(--royal-red); text-align: center; border-bottom: 2px solid var(--gold); padding-bottom: 10px; }
-.modal-detail { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f9f9f9; font-size: 0.9rem; }
-.modal-label { font-weight: 600; color: #555; }
-
-/* --- Static Pages & Footer --- */
-.static-body { background: white; padding: 20px; border-radius: 15px; font-size: 0.9rem; color: #444; }
-.app-footer { text-align: center; padding: 20px; font-size: 0.8rem; color: #888; border-top: 1px solid #eee; margin-top: 30px; }
-.app-footer span { cursor: pointer; margin: 0 8px; color: var(--royal-red); font-weight: 500; }
+/* --- Footer --- */
+.final-footer { text-align: center; padding: 30px 20px; color: #999; font-size: 0.8rem; }
 
 /* --- Loader --- */
 #loader { position: fixed; inset: 0; background: var(--bg); display: flex; justify-content: center; align-items: center; z-index: 9999; }
-.spinner { width: 45px; height: 45px; border: 5px solid #eee; border-top-color: var(--royal-red); border-radius: 50%; animation: spin 1s linear infinite; }
+.spinner { width: 40px; height: 40px; border: 4px solid #eee; border-top-color: var(--royal-red); border-radius: 50%; animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* --- Responsive Modal --- */
+.modal { display: none; position: fixed; z-index: 3000; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); }
+.modal-content { background: white; width: 85%; max-width: 350px; margin: 20% auto; padding: 25px; border-radius: 20px; text-align: center; position: relative; }
+.close-modal { position: absolute; right: 15px; top: 10px; font-size: 25px; cursor: pointer; color: #666; }

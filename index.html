@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Rajput - क्षत्रिय परिचायक</title>
-    
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#8B0000">
-    <link rel="apple-touch-icon" href="assets/logo.png">
-    
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
@@ -23,7 +20,6 @@
             <span class="app-name">Rajput</span>
         </div>
         <div class="header-right">
-            <i class="fa-solid fa-bell" id="notif-bell"></i>
             <i class="fa-solid fa-right-from-bracket" id="logout-btn"></i>
         </div>
     </header>
@@ -34,11 +30,11 @@
             <span id="close-sidebar">&times;</span>
         </div>
         <div class="sidebar-links">
-            <a href="#" onclick="showStaticPage('about')"><i class="fa-solid fa-info-circle"></i> About Us</a>
-            <a href="#" onclick="showStaticPage('terms')"><i class="fa-solid fa-file-contract"></i> Terms</a>
-            <a href="#" onclick="showStaticPage('privacy')"><i class="fa-solid fa-lock"></i> Privacy</a>
-            <a href="#" onclick="showStaticPage('contact')"><i class="fa-solid fa-envelope"></i> Contact Us</a>
-            <a href="#" onclick="showStaticPage('faq')"><i class="fa-solid fa-question-circle"></i> FAQ</a>
+            <a href="javascript:void(0)" id="menu-about"><i class="fa-solid fa-info-circle"></i> About Us</a>
+            <a href="javascript:void(0)" id="menu-terms"><i class="fa-solid fa-file-contract"></i> Terms</a>
+            <a href="javascript:void(0)" id="menu-privacy"><i class="fa-solid fa-lock"></i> Privacy</a>
+            <a href="javascript:void(0)" id="menu-contact"><i class="fa-solid fa-envelope"></i> Contact Us</a>
+            <a href="javascript:void(0)" id="menu-faq"><i class="fa-solid fa-question-circle"></i> FAQ</a>
         </div>
     </nav>
 
@@ -46,49 +42,41 @@
         
         <section id="page-login" class="app-page active">
             <div class="welcome-box">
-                <img src="assets/logo.png" class="main-logo" alt="Logo" onerror="this.src='logo.png';">
+                <img src="assets/logo.png" class="main-logo" alt="Logo">
                 <h2>जय श्री राम</h2>
                 <p>समाज के डिजिटल मंच से जुड़ें</p>
-                <button id="login-btn" class="btn-google">
-                    <i class="fa-brands fa-google"></i> Google Login
-                </button>
+                <button id="login-btn" class="btn-google">Google Login</button>
             </div>
         </section>
 
         <section id="page-profile-setup" class="app-page">
-            <div class="dashboard-banner">
-                <h3>अपनी प्रोफाइल बनाएं</h3>
-            </div>
+            <div class="dashboard-banner"><h3>अपनी प्रोफाइल बनाएं</h3></div>
             <div class="form-container">
-                <p class="warning-text">* प्रोफाइल के लिए फोटो अनिवार्य है</p>
                 <div class="photo-upload-cont">
-                    <label for="p-photo">
-                        <div id="photo-preview"><i class="fa-solid fa-camera"></i><br>फोटो जोड़ें</div>
-                    </label>
+                    <label for="p-photo"><div id="photo-preview">फोटो जोड़ें</div></label>
                     <input type="file" id="p-photo" accept="image/*" style="display:none;">
                 </div>
                 <input type="text" id="p-name" placeholder="पूरा नाम">
                 <input type="text" id="p-father" placeholder="पिता का नाम">
-                <input type="number" id="p-age" placeholder="उम्र">
-                <input type="text" id="p-gotra" placeholder="गोत्र">
-                <input type="text" id="p-blood" placeholder="ब्लड ग्रुप">
-                <input type="text" id="p-profession" placeholder="पेशा">
                 <input type="text" id="p-city" placeholder="वर्तमान शहर">
-                <textarea id="p-address" placeholder="स्थायी पता"></textarea>
-                <button id="btn-save-profile" class="btn-primary">प्रोफाइल सुरक्षित करें</button>
+                <input type="text" id="p-gotra" placeholder="गोत्र">
+                <button id="btn-save-profile" class="btn-primary">सुरक्षित करें</button>
             </div>
         </section>
 
         <section id="page-dashboard" class="app-page">
-            <div class="sahyog-card">
-                <p>यह मंच समाज को जोड़ने के लिए एक निःस्वार्थ प्रयास है। वेबसाइट के रख-रखाव हेतु सहयोग करने के लिए नीचे दिए बटन का उपयोग करें।</p>
-                <button onclick="window.openQRModal()" class="btn-sahyog">रख-रखाव में सहयोग दें</button>
-            </div>
+            <div id="welcome-msg" style="padding:15px; font-weight:600; color:var(--royal-red);"></div>
 
-            <div class="emergency-alert-box">
-                <h4><i class="fa-solid fa-triangle-exclamation"></i> Emergency Alert</h4>
-                <textarea id="alert-input" placeholder="आपातकालीन सूचना यहाँ लिखें (24 घंटे में स्वतः डिलीट हो जाएगी)"></textarea>
-                <button id="btn-send-alert" class="btn-alert">अलर्ट भेजें</button>
+            <div id="member-only-content">
+                <div class="sahyog-card">
+                    <p>संगठन के रख-रखाव हेतु सहयोग करें।</p>
+                    <button onclick="window.openQRModal()" class="btn-sahyog">सहयोग दें</button>
+                </div>
+                <div class="emergency-alert-box">
+                    <h4>Emergency Alert</h4>
+                    <textarea id="alert-input" placeholder="आपातकालीन सूचना..."></textarea>
+                    <button id="btn-send-alert" class="btn-alert">अलर्ट भेजें</button>
+                </div>
             </div>
 
             <div class="notice-board-container">
@@ -97,56 +85,36 @@
             </div>
 
             <div class="features-grid">
-                <div class="f-card" id="btn-goto-members">
-                    <i class="fa-solid fa-users"></i>
-                    <span>सदस्य सूची</span>
-                </div>
-                <div class="f-card" id="btn-goto-chat">
-                    <i class="fa-solid fa-comments"></i>
-                    <span>निजी चर्चा (Chat)</span>
-                </div>
-                <div class="f-card" id="btn-goto-profile-view">
-                    <i class="fa-solid fa-user-shield"></i>
-                    <span>मेरी प्रोफाइल</span>
-                </div>
-                <div id="btn-admin-panel" class="f-card admin-only" style="display:none;">
-                    <i class="fa-solid fa-user-gear"></i>
-                    <span>Admin Tools</span>
-                </div>
+                <div class="f-card" id="btn-goto-members"><i class="fa-solid fa-users"></i><span>सदस्य सूची</span></div>
+                <div class="f-card" id="btn-goto-chat"><i class="fa-solid fa-comments"></i><span>निजी चर्चा</span></div>
+                <div id="btn-admin-panel" class="f-card admin-only" style="display:none;"><i class="fa-solid fa-user-gear"></i><span>Admin Tools</span></div>
+            </div>
+        </section>
+
+        <section id="page-admin" class="app-page">
+            <div class="page-header-nav"><i class="fa-solid fa-arrow-left" id="admin-to-dash"></i><span>Admin Control</span></div>
+            
+            <div class="admin-box">
+                <h4>सदस्य प्रबंधन (खोजें/हटाएं)</h4>
+                <input type="text" id="admin-search-input" placeholder="नाम या शहर से खोजें...">
+                <div id="admin-user-list"></div>
+            </div>
+
+            <div class="admin-box">
+                <h4>नोटिस पब्लिश करें</h4>
+                <textarea id="notice-msg" placeholder="संदेश लिखें..."></textarea>
+                <button id="btn-publish-notice" class="btn-primary">Post Notice</button>
             </div>
         </section>
 
         <section id="page-members" class="app-page">
-            <div class="page-header-nav">
-                <i class="fa-solid fa-arrow-left" id="back-to-dash"></i>
-                <span>समाज के सदस्य</span>
-            </div>
+            <div class="page-header-nav"><i class="fa-solid fa-arrow-left" id="back-to-dash"></i><span>समाज की सूची</span></div>
             <div id="members-list-container"></div>
         </section>
 
-        <section id="page-admin" class="app-page">
-            <div class="page-header-nav">
-                <i class="fa-solid fa-arrow-left" id="admin-to-dash"></i>
-                <span>Admin Control</span>
-            </div>
-            <div class="admin-box">
-                <h4>Publish Notice (Max 21 Days)</h4>
-                <input type="file" id="notice-upload" accept="image/*">
-                <textarea id="notice-msg" placeholder="संदेश लिखें..."></textarea>
-                <button id="btn-publish-notice" class="btn-primary">Post Notice</button>
-            </div>
-            <div id="admin-waitlist-container">
-                <h5>Waitlist & Member List</h5>
-                <div id="admin-user-list"></div>
-            </div>
-        </section>
-
         <section id="page-static" class="app-page">
-            <div class="page-header-nav">
-                <i class="fa-solid fa-arrow-left" onclick="showPage('page-dashboard')"></i>
-                <span id="static-title">Details</span>
-            </div>
-            <div id="static-content" class="static-body"></div>
+            <div class="page-header-nav"><i class="fa-solid fa-arrow-left" onclick="window.showPage('page-dashboard')"></i><span id="static-title"></span></div>
+            <div id="static-content" style="padding:20px;"></div>
         </section>
 
     </main>
@@ -155,38 +123,14 @@
         <div class="modal-content">
             <span class="close-modal" onclick="window.closeQRModal()">&times;</span>
             <h4>Scan to Support</h4>
-            <img src="assets/admin-qr.png" alt="Admin QR Code" class="qr-img">
-            <p>समाज सेवा में आपका सहयोग सराहनीय है।</p>
+            <img src="assets/admin-qr.png" class="qr-img">
         </div>
     </div>
-
-    <div id="member-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" id="close-modal">&times;</span>
-            <div id="modal-body"></div>
-        </div>
-    </div>
-
-    <footer class="final-footer">
-        <p>Copyright © Kshatriya Parichayak 2026</p>
-    </footer>
 
     <script type="module" src="js/firebase-config.js"></script>
     <script type="module" src="js/ui.js"></script>
     <script type="module" src="js/auth.js"></script>
-    <script type="module" src="js/members.js"></script>
     <script type="module" src="js/admin.js"></script>
-    <script type="module" src="js/auto-cleanup.js"></script>
     <script type="module" src="js/main.js"></script>
-
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                .then(reg => console.log('SW Registered'))
-                .catch(err => console.log('SW Error', err));
-            });
-        }
-    </script>
 </body>
 </html>

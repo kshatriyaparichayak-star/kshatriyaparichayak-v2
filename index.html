@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Rajput - क्षत्रिय परिचायक</title>
+    
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#8B0000">
+    <link rel="apple-touch-icon" href="assets/logo.png">
     
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -44,7 +46,7 @@
         
         <section id="page-login" class="app-page active">
             <div class="welcome-box">
-                <img src="assets/logo.png" class="main-logo" alt="Logo" onerror="this.style.display='none'">
+                <img src="assets/logo.png" class="main-logo" alt="Logo" onerror="this.src='logo.png';">
                 <h2>जय श्री राम</h2>
                 <p>समाज के डिजिटल मंच से जुड़ें</p>
                 <button id="login-btn" class="btn-google">
@@ -79,8 +81,8 @@
 
         <section id="page-dashboard" class="app-page">
             <div class="sahyog-card">
-                <p>यह मंच समाज को जोड़ने के लिए एक निःस्वार्थ प्रयास है। वेबसाइट के रख-रखाव (Maintenance) में सहयोग करने के लिए नीचे दिए बटन का उपयोग करें।</p>
-                <button onclick="openQRModal()" class="btn-sahyog">रख-रखाव में सहयोग दें</button>
+                <p>यह मंच समाज को जोड़ने के लिए एक निःस्वार्थ प्रयास है। वेबसाइट के रख-रखाव हेतु सहयोग करने के लिए नीचे दिए बटन का उपयोग करें।</p>
+                <button onclick="window.openQRModal()" class="btn-sahyog">रख-रखाव में सहयोग दें</button>
             </div>
 
             <div class="emergency-alert-box">
@@ -91,8 +93,7 @@
 
             <div class="notice-board-container">
                 <h4>सूचना पट्ट (Notice Board)</h4>
-                <div id="main-notice-board" class="notice-content">
-                    </div>
+                <div id="main-notice-board" class="notice-content"></div>
             </div>
 
             <div class="features-grid">
@@ -135,19 +136,34 @@
                 <button id="btn-publish-notice" class="btn-primary">Post Notice</button>
             </div>
             <div id="admin-waitlist-container">
-                <h5>Waitlist (Pending Profiles)</h5>
+                <h5>Waitlist & Member List</h5>
                 <div id="admin-user-list"></div>
             </div>
+        </section>
+
+        <section id="page-static" class="app-page">
+            <div class="page-header-nav">
+                <i class="fa-solid fa-arrow-left" onclick="showPage('page-dashboard')"></i>
+                <span id="static-title">Details</span>
+            </div>
+            <div id="static-content" class="static-body"></div>
         </section>
 
     </main>
 
     <div id="qr-modal" class="modal">
         <div class="modal-content">
-            <span class="close-modal" onclick="closeQRModal()">&times;</span>
+            <span class="close-modal" onclick="window.closeQRModal()">&times;</span>
             <h4>Scan to Support</h4>
             <img src="assets/admin-qr.png" alt="Admin QR Code" class="qr-img">
             <p>समाज सेवा में आपका सहयोग सराहनीय है।</p>
+        </div>
+    </div>
+
+    <div id="member-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="close-modal">&times;</span>
+            <div id="modal-body"></div>
         </div>
     </div>
 
@@ -158,6 +174,19 @@
     <script type="module" src="js/firebase-config.js"></script>
     <script type="module" src="js/ui.js"></script>
     <script type="module" src="js/auth.js"></script>
+    <script type="module" src="js/members.js"></script>
+    <script type="module" src="js/admin.js"></script>
+    <script type="module" src="js/auto-cleanup.js"></script>
     <script type="module" src="js/main.js"></script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                .then(reg => console.log('SW Registered'))
+                .catch(err => console.log('SW Error', err));
+            });
+        }
+    </script>
 </body>
 </html>
